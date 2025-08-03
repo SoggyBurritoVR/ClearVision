@@ -1,4 +1,4 @@
-/*! ClearVision v7.0.1 by ClearVision Team byebyebyebabygooooooo*/
+/*! ClearVision v7.0.1 by ClearVision Team trying again*/
 @keyframes cv-channel-select {
     from {
         right: 100%;
@@ -4389,7 +4389,7 @@ code {
     --channel-hover: var(--interactive-hover);
     --channel-selected: var(--interactive-active);
     /*--channel-selected-bg: var(--main-color);*/
-    --channel-selected-bg: var(--random-color);
+    --channel-selected-bg: var(--main-color);
     --channel-unread: var(--main-color);
     --channel-unread-hover: var(--hover-color);
     --focus-color: var(--main-color);
