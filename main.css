@@ -4392,7 +4392,7 @@ code {
     --channel-selected-bg: var(--main-color);
     --channel-unread: var(--main-color);
     --channel-unread-hover: var(--hover-color);
-    --focus-color: var(--main-color);
+    --focus-color: var(--random-color);
 }
 
 :is(.theme-light, .theme-dark .theme-light) {
