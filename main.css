@@ -4292,7 +4292,7 @@ code {
     right: 0;
     /*background: var(--hsl-main-color);*/
     background: transparent;
-    animation: cv-channel-select 0.3s ease-in-out;
+    animation: cv-channel-select 0.3s ease-in;
 }
 
 .interactive__972a0.interactiveSelected__972a0 .activityStatusText__972a0 {
