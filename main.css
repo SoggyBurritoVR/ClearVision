@@ -4291,7 +4291,7 @@ code {
 .interactive__972a0.interactiveSelected__972a0::before {
     right: 0;
     background: var(--hsl-main-color);
-    animation: cv-channel-select 0.3s ease-in;
+    /*animation: cv-channel-select 0.3s ease-in;*/
 }
 
 .interactive__972a0.interactiveSelected__972a0 .activityStatusText__972a0 {
