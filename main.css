@@ -1,4 +1,4 @@
-/*! ClearVision v7.0.1 by ClearVision Team trying again*/
+/*! ClearVision v7.0.1 by ClearVision Team */
 @keyframes cv-channel-select {
     from {
         right: 100%;
@@ -4287,10 +4287,10 @@ code {
     background-color: rgba(0, 0, 0, 0);
     color: var(--interactive-active);
 }
-
+/*Selected Highlight*/
 .interactive__972a0.interactiveSelected__972a0::before {
     right: 0;
-    background: var(--hsl-random-color);
+    /*background: var(--hsl-main-color);*/
     background: transparent;
     animation: cv-channel-select 0.3s ease-in-out;
 }
@@ -4330,7 +4330,6 @@ code {
 }
 
 :root {
-    --hsl-random-color: hsl(from var(--random-color) h calc(var(--saturation-factor, 1) * s) l/alpha);
     --hsl-main-color: hsl(from var(--main-color) h calc(var(--saturation-factor, 1) * s) l/alpha);
     --hsl-hover-color: hsl(from var(--hover-color) h calc(var(--saturation-factor, 1) * s) l/alpha);
     --hsl-success-color: hsl(from var(--success-color) h calc(var(--saturation-factor, 1) * s) l/alpha);
@@ -4354,7 +4353,6 @@ code {
     --font-code: var(--code-font);
     --focus-primary: var(--focus-color);
     --main-color: #2780e6;
-    --random-color: #e627d3;
     --hover-color: #1e63b3;
     --success-color: #43b581;
     --warning-color: #fff;
@@ -4390,11 +4388,10 @@ code {
     --channel-muted: var(--interactive-muted);
     --channel-hover: var(--interactive-hover);
     --channel-selected: var(--interactive-active);
-    /*--channel-selected-bg: var(--main-color);*/
-    --channel-selected-bg: var(--random-color);
+    --channel-selected-bg: var(--main-color);
     --channel-unread: var(--main-color);
     --channel-unread-hover: var(--hover-color);
-    --focus-color: var(--random-color);
+    --focus-color: var(--main-color);
 }
 
 :is(.theme-light, .theme-dark .theme-light) {
