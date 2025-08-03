@@ -4291,6 +4291,7 @@ code {
 .interactive__972a0.interactiveSelected__972a0::before {
     right: 0;
     background: var(--hsl-random-color);
+    background: transparent;
     animation: cv-channel-select 0.3s ease-in-out;
 }
 
