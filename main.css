@@ -4329,6 +4329,7 @@ code {
 }
 
 :root {
+    --hsl-random-color: hsl(from var(--random-color) h calc(var(--saturation-factor, 1) * s) l/alpha);
     --hsl-main-color: hsl(from var(--main-color) h calc(var(--saturation-factor, 1) * s) l/alpha);
     --hsl-hover-color: hsl(from var(--hover-color) h calc(var(--saturation-factor, 1) * s) l/alpha);
     --hsl-success-color: hsl(from var(--success-color) h calc(var(--saturation-factor, 1) * s) l/alpha);
@@ -4389,7 +4390,7 @@ code {
     --channel-hover: var(--interactive-hover);
     --channel-selected: var(--interactive-active);
     /*--channel-selected-bg: var(--main-color);*/
-    --channel-selected-bg: var(--main-color);
+    --channel-selected-bg: var(--random-color);
     --channel-unread: var(--main-color);
     --channel-unread-hover: var(--hover-color);
     --focus-color: var(--random-color);
