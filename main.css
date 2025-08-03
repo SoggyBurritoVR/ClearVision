@@ -4290,8 +4290,7 @@ code {
 /*Selected Highlight*/
 .interactive__972a0.interactiveSelected__972a0::before {
     right: 0;
-    /*background: var(--hsl-main-color);*/
-    background: transparent;
+    background: var(--hsl-main-color);
     animation: cv-channel-select 0.3s ease-in;
 }
 
