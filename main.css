@@ -3480,7 +3480,7 @@ code {
   opacity: 0.15;
 }
 .interactive__972a0 {
-/*transition: all 0.15s ease-in-out;*/
+  transition: all 0.15s ease-in-out;
   border-radius: 4px;
 }
 .interactive__972a0::before {
@@ -3490,7 +3490,7 @@ code {
   right: 100%;
   bottom: 0;
   left: 0;
-  /*transition: all 0.15s ease-in-out;*/
+  transition: all 0.15s ease-in-out;
   z-index: -1;
   border-radius: 4px;
 }
@@ -3504,7 +3504,7 @@ code {
 .interactive__972a0.interactiveSelected__972a0::before {
   right: 0;
   background: var(--hsl-main-color);
-  /*animation: cv-channel-select 0.3s ease-in-out;*/
+  animation: cv-channel-select 0.3s ease-in-out;
 }
 .interactive__972a0.interactiveSelected__972a0 .activityStatusText__972a0 {
   color: var(--interactive-active);
