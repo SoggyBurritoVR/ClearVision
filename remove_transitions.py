@@ -4,11 +4,11 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 
 
-TARGET = ".interactive__972a0"
+TARGET = "972a0"
 
 
 def find_matching_brace(text, opening):
-    """Find the closing brace matching the given opening brace."""
+    """Find the closing brace matching opening {."""
 
     depth = 0
     in_string = None
@@ -18,6 +18,7 @@ def find_matching_brace(text, opening):
     i = opening
 
     while i < len(text):
+
         char = text[i]
         next_char = text[i + 1] if i + 1 < len(text) else ""
 
@@ -26,12 +27,11 @@ def find_matching_brace(text, opening):
             if char == "*" and next_char == "/":
                 in_comment = False
                 i += 2
-                continue
-
-            i += 1
+            else:
+                i += 1
             continue
 
-        # Start CSS comment
+        # Start comment
         if not in_string and char == "/" and next_char == "*":
             in_comment = True
             i += 2
@@ -66,106 +66,210 @@ def find_matching_brace(text, opening):
 
         i += 1
 
-    raise ValueError("Unmatched opening brace")
+    return -1
 
 
-def find_target_rules(css):
+def find_rules_containing_target(css):
     """
-    Find CSS rules whose selector contains TARGET.
+    Find every CSS rule containing '972a0' anywhere
+    in its selector.
 
-    Examples:
-
-        .interactive__972a0
-        .interactive__972a0::before
-        .interactive__972a0::after
-        .interactive__972a0:hover
-        .foo .interactive__972a0::before
+    Works on completely minified one-line CSS.
     """
 
     rules = []
 
-    # Match the target anywhere before an opening brace.
-    pattern = re.compile(
-        re.escape(TARGET) + r"(?=[^{}]*\{)"
-    )
+    search_from = 0
 
-    for match in pattern.finditer(css):
+    while True:
 
-        # Find the opening brace belonging to this selector.
-        opening = css.find("{", match.end())
+        target_pos = css.find(TARGET, search_from)
+
+        if target_pos == -1:
+            break
+
+        # ---------------------------------------------------------
+        # Find the opening { after 972a0.
+        # ---------------------------------------------------------
+
+        i = target_pos + len(TARGET)
+
+        in_string = None
+        in_comment = False
+        escape = False
+
+        opening = -1
+
+        while i < len(css):
+
+            char = css[i]
+            next_char = (
+                css[i + 1]
+                if i + 1 < len(css)
+                else ""
+            )
+
+            # Comment
+            if in_comment:
+
+                if char == "*" and next_char == "/":
+                    in_comment = False
+                    i += 2
+                else:
+                    i += 1
+
+                continue
+
+            # Start comment
+            if (
+                not in_string
+                and char == "/"
+                and next_char == "*"
+            ):
+                in_comment = True
+                i += 2
+                continue
+
+            # String
+            if in_string:
+
+                if escape:
+                    escape = False
+
+                elif char == "\\":
+                    escape = True
+
+                elif char == in_string:
+                    in_string = None
+
+                i += 1
+                continue
+
+            # Start string
+            if char in ("'", '"'):
+                in_string = char
+                i += 1
+                continue
+
+            # Another rule boundary before {
+            if char == "}":
+                break
+
+            # Found opening brace
+            if char == "{":
+                opening = i
+                break
+
+            i += 1
 
         if opening == -1:
+            search_from = target_pos + len(TARGET)
             continue
 
-        try:
-            closing = find_matching_brace(css, opening)
-        except ValueError:
+        # Find matching closing brace.
+        closing = find_matching_brace(
+            css,
+            opening
+        )
+
+        if closing == -1:
+            search_from = target_pos + len(TARGET)
             continue
 
-        rules.append((opening, closing))
+        rules.append(
+            (
+                target_pos,
+                opening,
+                closing
+            )
+        )
+
+        # Continue after this rule.
+        search_from = closing + 1
 
     return rules
 
 
-def modify_rule(css, opening, closing):
+def disable_transitions_and_animations(block):
     """
-    Modify ONLY direct-child transition declarations
-    inside one CSS rule.
-    """
+    Comment out direct transition and animation declarations.
 
-    block = css[opening + 1:closing]
+    Handles:
+
+        transition:all .2s;
+
+        transition:all .2s
+
+        animation:foo .3s ease-in-out;
+
+        animation:foo .3s ease-in-out
+
+    Works with minified CSS.
+    """
 
     result = []
     last = 0
 
+    i = 0
     depth = 0
+
     in_string = None
     in_comment = False
     escape = False
 
-    # Matches:
-    #
-    # transition: all 0.15s ease-in-out;
-    #
-    # It deliberately does NOT match:
-    #
-    # transition-property:
-    # transition-duration:
-    # transition-delay:
-    #
-    transition_pattern = re.compile(
-        r"transition\s*:\s*[^;{}]+;"
-    )
-
-    i = 0
     changes = 0
 
-    while i < len(block):
-        char = block[i]
-        next_char = block[i + 1] if i + 1 < len(block) else ""
+    # Properties we want to kill.
+    properties = (
+        "transition",
+        "animation",
+    )
 
+    while i < len(block):
+
+        char = block[i]
+        next_char = (
+            block[i + 1]
+            if i + 1 < len(block)
+            else ""
+        )
+
+        # ---------------------------------------------------------
         # Comment
+        # ---------------------------------------------------------
+
         if in_comment:
+
             if char == "*" and next_char == "/":
                 in_comment = False
                 i += 2
-                continue
+            else:
+                i += 1
 
-            i += 1
             continue
 
         # Start comment
-        if not in_string and char == "/" and next_char == "*":
+        if (
+            not in_string
+            and char == "/"
+            and next_char == "*"
+        ):
             in_comment = True
             i += 2
             continue
 
+        # ---------------------------------------------------------
         # String
+        # ---------------------------------------------------------
+
         if in_string:
+
             if escape:
                 escape = False
+
             elif char == "\\":
                 escape = True
+
             elif char == in_string:
                 in_string = None
 
@@ -178,7 +282,10 @@ def modify_rule(css, opening, closing):
             i += 1
             continue
 
+        # ---------------------------------------------------------
         # Nested block
+        # ---------------------------------------------------------
+
         if char == "{":
             depth += 1
             i += 1
@@ -189,92 +296,244 @@ def modify_rule(css, opening, closing):
             i += 1
             continue
 
-        # Only modify transitions directly inside the target rule.
+        # ---------------------------------------------------------
+        # Look for transition or animation
+        # ---------------------------------------------------------
+
         if depth == 0:
 
-            match = transition_pattern.match(block, i)
+            found_property = None
 
-            if match:
-                # Make sure this is actually a CSS declaration,
-                # rather than part of another word.
-                before = block[i - 1] if i > 0 else ""
+            for property_name in properties:
 
-                if not (before.isalnum() or before in "_-"):
-                    result.append(block[last:i])
-
-                    original = match.group(0)
-
-                    # Preserve indentation.
-                    line_start = block.rfind("\n", 0, i) + 1
-                    indentation = block[line_start:i]
-
-                    # If there is only whitespace before transition,
-                    # preserve it inside the comment.
-                    if indentation.strip() == "":
-                        replacement = (
-                            indentation
-                            + "/* "
-                            + original
-                            + " */"
-                        )
-                    else:
-                        # Same-line declaration.
-                        replacement = (
-                            "/* "
-                            + original
-                            + " */"
-                        )
-
-                    result.append(replacement)
-
-                    i = match.end()
-                    last = i
-                    changes += 1
+                if not block.startswith(
+                    property_name,
+                    i
+                ):
                     continue
+
+                before = (
+                    block[i - 1]
+                    if i > 0
+                    else ""
+                )
+
+                after_pos = (
+                    i + len(property_name)
+                )
+
+                after = (
+                    block[after_pos]
+                    if after_pos < len(block)
+                    else ""
+                )
+
+                # Must be an actual property name.
+                #
+                # Prevent:
+                #
+                # transition-property
+                # transition-duration
+                # animation-name
+                # animation-duration
+                #
+                if (
+                    before.isalnum()
+                    or before in "_-"
+                ):
+                    continue
+
+                if after not in " \t\r\n:":
+                    continue
+
+                found_property = property_name
+                break
+
+            if found_property:
+
+                property_end = (
+                    i + len(found_property)
+                )
+
+                # Skip whitespace between property
+                # name and colon.
+                colon = property_end
+
+                while (
+                    colon < len(block)
+                    and block[colon].isspace()
+                ):
+                    colon += 1
+
+                # Must have a colon.
+                if (
+                    colon < len(block)
+                    and block[colon] == ":"
+                ):
+
+                    # -------------------------------------------------
+                    # Find end of declaration.
+                    # -------------------------------------------------
+
+                    j = colon + 1
+
+                    value_string = None
+                    value_comment = False
+                    value_escape = False
+
+                    while j < len(block):
+
+                        c = block[j]
+                        n = (
+                            block[j + 1]
+                            if j + 1 < len(block)
+                            else ""
+                        )
+
+                        # Comment inside value
+                        if value_comment:
+
+                            if c == "*" and n == "/":
+                                value_comment = False
+                                j += 2
+                            else:
+                                j += 1
+
+                            continue
+
+                        if (
+                            not value_string
+                            and c == "/"
+                            and n == "*"
+                        ):
+                            value_comment = True
+                            j += 2
+                            continue
+
+                        # String inside value
+                        if value_string:
+
+                            if value_escape:
+                                value_escape = False
+
+                            elif c == "\\":
+                                value_escape = True
+
+                            elif c == value_string:
+                                value_string = None
+
+                            j += 1
+                            continue
+
+                        if c in ("'", '"'):
+                            value_string = c
+                            j += 1
+                            continue
+
+                        # Declaration ends here.
+                        if c == ";":
+                            break
+
+                        # Rule ends here.
+                        if c == "}":
+                            break
+
+                        j += 1
+
+                    # Make sure there is a value.
+                    value = block[
+                        colon + 1:j
+                    ]
+
+                    if value.strip():
+
+                        # Include semicolon if it exists.
+                        end = j
+
+                        if (
+                            j < len(block)
+                            and block[j] == ";"
+                        ):
+                            end = j + 1
+
+                        original = block[
+                            i:end
+                        ]
+
+                        result.append(
+                            block[last:i]
+                        )
+
+                        # Comment it out.
+                        result.append(
+                            "/*"
+                            + original
+                            + "*/"
+                        )
+
+                        i = end
+                        last = i
+
+                        changes += 1
+
+                        continue
 
         i += 1
 
-    result.append(block[last:])
+    result.append(
+        block[last:]
+    )
 
-    return "".join(result), changes
+    return (
+        "".join(result),
+        changes
+    )
 
 
 def process_css(css):
-    """Process every matching .interactive__972a0 rule."""
 
-    rules = find_target_rules(css)
+    rules = find_rules_containing_target(
+        css
+    )
 
     total_changes = 0
 
-    # Work backwards so positions remain valid.
-    for opening, closing in reversed(rules):
+    # Work backwards so positions don't shift.
+    for target_pos, opening, closing in reversed(rules):
 
-        modified, changes = modify_rule(
-            css,
-            opening,
+        block = css[
+            opening + 1:
             closing
+        ]
+
+        modified_block, changes = (
+            disable_transitions_and_animations(
+                block
+            )
         )
 
         css = (
             css[:opening + 1]
-            + modified
+            + modified_block
             + css[closing:]
         )
 
         total_changes += changes
 
-    return css, len(rules), total_changes
+    return (
+        css,
+        len(rules),
+        total_changes
+    )
 
 
 def main():
 
-    # Create hidden Tkinter window.
     root = tk.Tk()
     root.withdraw()
 
-    # Select CSS file.
     file_path = filedialog.askopenfilename(
-        title="Select the CSS file to modify",
+        title="Select compressed CSS file",
         filetypes=[
             ("CSS files", "*.css"),
             ("All files", "*.*")
@@ -288,31 +547,35 @@ def main():
 
     try:
 
-        # Read CSS.
-        css = path.read_text(encoding="utf-8")
-
-        # Process CSS.
-        modified_css, rule_count, transition_count = process_css(css)
-
-        # Output filename.
-        output_path = path.with_name(
-            path.stem + "_modified" + path.suffix
+        css = path.read_text(
+            encoding="utf-8"
         )
 
-        # Save.
+        modified_css, rule_count, change_count = (
+            process_css(css)
+        )
+
+        output_path = path.with_name(
+            path.stem
+            + "_modified"
+            + path.suffix
+        )
+
         output_path.write_text(
             modified_css,
             encoding="utf-8"
         )
 
-        # Report.
         messagebox.showinfo(
             "Complete",
             (
-                f"Done!\n\n"
-                f"Matching rules found: {rule_count}\n"
-                f"Transitions disabled: {transition_count}\n\n"
-                f"Modified file:\n{output_path}"
+                f"Finished!\n\n"
+                f"Rules containing '{TARGET}': "
+                f"{rule_count}\n\n"
+                f"Transitions/animations disabled: "
+                f"{change_count}\n\n"
+                f"Output file:\n"
+                f"{output_path}"
             )
         )
 
@@ -320,7 +583,10 @@ def main():
 
         messagebox.showerror(
             "Error",
-            f"Something went wrong:\n\n{e}"
+            (
+                "Something went wrong:\n\n"
+                f"{type(e).__name__}: {e}"
+            )
         )
 
 
