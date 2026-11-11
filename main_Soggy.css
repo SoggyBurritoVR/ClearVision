@@ -1187,7 +1187,7 @@ code {
 .memberInner_Iy0c7A {
   position: relative;
   width: 100%;
-  /*transition: all 0.15s ease-in-out, transform 0.1s ease-in-out;*/
+  transition: all 0.15s ease-in-out, transform 0.1s ease-in-out;
   z-index: 1;
 }
 .memberInner_Iy0c7A:active {
@@ -1199,7 +1199,7 @@ code {
 }
 .member_Iy0c7A .nameContainer_Wo4EpK {
   position: static;
-  /*transition: all 0.15s ease-in-out;*/
+  transition: all 0.15s ease-in-out;
   z-index: unset;
 }
 .member_Iy0c7A .nameContainer_Wo4EpK:before {
@@ -1216,7 +1216,7 @@ code {
   );
   border-radius: 4px;
   opacity: 0;
-  /*transition: all 0.15s ease-in-out;*/
+  transition: all 0.15s ease-in-out;
   z-index: -1;
 }
 .member_Iy0c7A .nameContainer_Wo4EpK:after {
@@ -1229,7 +1229,7 @@ code {
   background: linear-gradient(to right, var(--hsl-main-color) 90%, transparent);
   border-radius: 3px;
   opacity: 0.8;
-  /*transition: all 0.3s ease-in-out;*/
+  transition: all 0.3s ease-in-out;
   z-index: -1;
 }
 .member_Iy0c7A .nameContainer_Wo4EpK[style^="color:"]:before,
@@ -1531,7 +1531,7 @@ code {
   right: 100%;
   bottom: 0;
   left: 0;
-  /*transition: all 0.3s ease-in-out;*/
+  transition: all 0.3s ease-in-out;
   z-index: -1;
   border-radius: 4px;
 }
@@ -3168,7 +3168,7 @@ code {
   content: "";
   height: 2px;
   flex-grow: 1;
-  /*transition: all 0.3s ease-in-out;*/
+  transition: all 0.3s ease-in-out;
   background: linear-gradient(to left, var(--hsl-main-color) 50%, transparent);
   margin-right: 5px;
 }
@@ -3176,7 +3176,7 @@ code {
   content: "";
   height: 2px;
   flex-grow: 1;
-  /*transition: all 0.3s ease-in-out;*/
+  transition: all 0.3s ease-in-out;
   background: linear-gradient(to right, var(--hsl-main-color) 50%, transparent);
   margin-left: 5px;
 }
@@ -3387,7 +3387,7 @@ code {
   opacity: 0.15;
 }
 .interactive_zln_tS {
-  transition: all 0.15s ease-in-out;
+  /*transition: all 0.15s ease-in-out;*/
   border-radius: 4px;
 }
 .interactive_zln_tS::before {
@@ -3397,7 +3397,7 @@ code {
   right: 100%;
   bottom: 0;
   left: 0;
-  transition: all 0.15s ease-in-out;
+  /*transition: all 0.15s ease-in-out;*/
   z-index: -1;
   border-radius: 4px;
 }
@@ -3411,7 +3411,7 @@ code {
 .interactive_zln_tS.interactiveSelected_zln_tS::before {
   right: 0;
   background: var(--hsl-main-color);
-  animation: cv-channel-select 0.3s ease-in-out;
+  /*animation: cv-channel-select 0.3s ease-in-out;*/
 }
 .interactive_zln_tS.interactiveSelected_zln_tS .activityStatusText_zln_tS {
   color: var(--interactive-text-active);
